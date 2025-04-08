@@ -1,5 +1,5 @@
 # LSTM Streamlit - Tidsserieprognose App
-
+https://bhupas-tidsserieprognose-app-app-js0pas.streamlit.app/
 ## Understøttede Prognosetyper
 - ✅ Univariat Flertrins-Prognose
 - ✅ Multivariat Flertrins-Prognose
