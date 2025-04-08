@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Importer nødvendige biblioteker
 import streamlit as st
 import pandas as pd
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -14,7 +12,7 @@ import time
 from datetime import timedelta
 import gc
 import plotly.figure_factory as ff
-import traceback # Til detaljeret fejlfinding
+import traceback 
 
 # --- Sidekonfiguration ---
 st.set_page_config(layout="wide", page_title="Automatisk Tidsserieprognose")
@@ -28,8 +26,6 @@ else:
     device = torch.device('cpu')
     st.sidebar.warning("GPU (CUDA) ikke tilgængelig, bruger CPU. Træning kan være langsom.", icon="⚠️")
 
-# --- Model Definition (LSTM) ---
-# (Modelkoden forbliver på engelsk for standardisering)
 class LSTMForecasting(nn.Module):
     def __init__(self, input_feature_size, lstm_hidden_size, linear_hidden_size, lstm_num_layers, linear_num_layers, output_size):
         super(LSTMForecasting, self).__init__()
@@ -38,7 +34,6 @@ class LSTMForecasting(nn.Module):
 
         self.lstm = nn.LSTM(input_feature_size, lstm_hidden_size, lstm_num_layers, batch_first=True)
 
-        # --- Dynamiske Lineære Lag ---
         self.linear_layers = nn.ModuleList()
         current_linear_size = lstm_hidden_size
         if linear_num_layers == 1:
@@ -89,7 +84,6 @@ class LSTMForecasting(nn.Module):
              out = self.fc(out)
         return out
 
-# --- Datahåndteringsfunktioner ---
 @st.cache_data # Cache indlæste data
 def load_data(uploaded_file):
     """Indlæser data fra uploadet CSV-fil."""
@@ -160,7 +154,6 @@ def preprocess_data(_df, date_col, input_cols, output_col):
         # Sorter efter dato *før* behandling af numeriske kolonner
         process_df.sort_values(by=date_col, inplace=True)
 
-        # --- Håndtering af Numeriske Kolonner ---
         feature_cols = process_df.columns.drop(date_col)
         initial_rows = len(process_df) # Nulstil rækkeantal efter dato-rensning
 
@@ -360,27 +353,23 @@ def split_sequences(features, target, n_steps_in, n_steps_out):
     if n_target_features == 1 and y.ndim == 3: y = y.reshape(y.shape[0], y.shape[1])
     return torch.from_numpy(X).float(), torch.from_numpy(y).float()
 
-# --- Streamlit App Layout ---
 st.title("📈 Tidsserieprognose med LSTM")
 st.markdown("""
 Upload dine tidsseriedata (CSV), vælg features, konfigurer LSTM-modellen,
 træn den, og visualiser prognoserne mod de faktiske værdier.
 """)
 
-# --- Placeholders til dynamisk indhold ---
 data_preview_placeholder = st.empty()
 preprocessing_vis_placeholder = st.empty()
 training_results_placeholder = st.empty()
 prediction_plot_placeholder = st.empty()
 
-# --- Sidebar til Kontroller ---
 st.sidebar.header("⚙️ Kontrolpanel & Parametre")
 
 # 1. Fil Upload
 st.sidebar.subheader("1. Data Upload")
 uploaded_file = st.sidebar.file_uploader("Upload CSV-fil:", type=['csv', 'txt'], help="Upload en CSV-fil med tidsseriedata. Sørg for, at den indeholder en datokolonne og mindst én numerisk kolonne.")
 
-# --- Initialiser Session State variabler ---
 if 'df_raw' not in st.session_state: st.session_state.df_raw = None
 if 'processed_data' not in st.session_state: st.session_state.processed_data = None
 if 'last_uploaded_filename' not in st.session_state: st.session_state.last_uploaded_filename = None
@@ -415,12 +404,11 @@ else:
     st.sidebar.info("Upload en CSV-fil for at begynde.")
     data_preview_placeholder.empty()
 
-# --- Hovedområde ---
-col1, col2 = st.columns([3, 2]) # Justeret kolonneforhold for mere plads til analyse
+col1, col2 = st.columns([3, 2]) 
 
 with col1:
     st.subheader("📊 Dataanalyse & Forbehandling")
-    with st.container(border=True, height=800): # Begrænset højde med scroll hvis nødvendigt
+    with st.container(border=True, height=800): 
         if st.session_state.df_raw is not None:
             st.markdown("**Feature Valg:**")
             all_columns = st.session_state.df_raw.columns.tolist()
@@ -454,12 +442,10 @@ with col1:
                 help="Klik her for at rense data, håndtere manglende værdier og udføre indledende analyse."
                 )
 
-            # --- Udfør Forbehandling ---
             if run_preprocessing:
                 with st.spinner("Forbehandler data..."):
                     st.session_state.processed_data = preprocess_data(st.session_state.df_raw, date_col, input_cols, output_col)
 
-            # --- Vis Forbehandlingsresultater ---
             if st.session_state.processed_data is not None:
                  with preprocessing_vis_placeholder.container():
                     st.success("Data er succesfuldt forbehandlet!")
@@ -567,7 +553,6 @@ with col2:
                      help="Start træningen af LSTM-modellen med de valgte parametre."
                      )
 
-                 # --- Træningsudførelse ---
                  if run_training and not train_button_disabled:
                      # Hent nødvendige kolonner fra session state (valgt i col1)
                      # Sikrer vi bruger de samme kolonner som blev forbehandlet
@@ -713,7 +698,6 @@ with col2:
                                      prediction_unscaled = scaler_y.inverse_transform(prediction_scaled.cpu().numpy())[0]
                                      actual_values = df_test[output_col_train].values
 
-                                     # --- Længde Tjek ---
                                      if len(prediction_unscaled) != len(actual_values):
                                          st.warning(f"Prediktionslængde ({len(prediction_unscaled)}) matcher ikke faktisk testlængde ({len(actual_values)}). Sammenligning trimmes.", icon="⚠️")
                                          min_len = min(len(prediction_unscaled), len(actual_values))
@@ -793,6 +777,5 @@ with col2:
             training_results_placeholder.empty()
             prediction_plot_placeholder.empty()
 
-# --- Footer ---
 st.markdown("---")
 st.caption("Udviklet med Streamlit, PyTorch, Statsmodels, Plotly og Pandas.")
