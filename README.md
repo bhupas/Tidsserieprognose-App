@@ -1,34 +1,32 @@
-# LSTM Streamlit
+# LSTM Streamlit - Tidsserieprognose App
 
+## Understøttede Prognosetyper
+- ✅ Univariat Flertrins-Prognose
+- ✅ Multivariat Flertrins-Prognose
 
-## Supported Forecast
-- ✅ Univariate Multi-Step Forecasting
-- ✅ Multivariate Multi-Step Forecasting
-  
-## Supported Models
-- ✅ LSTM (Based on Pytorch, Supports both GPU & CPU)
+## Understøttede Modeller
+- ✅ LSTM (Baseret på PyTorch, Understøtter både GPU & CPU)
 
-## Pre-built Features
-- 🛠️ Data Pre-Processing:
-  - Linear Interpolation
-  - Backward Fill
-- 🔢 Correlation Matrix
-- 🔄 Seasonal Decompose:
+## Indbyggede Funktioner
+- 🛠️ Dataforbehandling:
+  - Lineær Interpolation
+  - Baglæns Opfyldning (Backward Fill)
+- 🔢 Korrelationsmatrix
+- 🔄 Sæsondekomponering:
   - Trend
-  - Seasonality
-- Custom 🧠Model Config
-- 📈 Plotly based graphs
-- 💾 Download Forecast Graph
-    
-## Supported Data Types
-- 📆 Date - `datetime`
-- 📥 Input Features - `int`, `float`
-- 📤 Output Feature - `int`, `float`
+  - Sæsonalitet
+- 🧠 Brugerdefineret Modelkonfiguration
+- 📈 Plotly-baserede grafer
+- 💾 Download Prognosegraf
 
-## LSTM Model Features
-- 🔙 Lag Steps
-- 🔜 Forecast Steps
-- Custom LSTM and Dense Layers
-- ⏱️ No. of Epochs
-- 📦 Batch Size
+## Understøttede Datatyper
+- 📆 Dato - `datetime`
+- 📥 Input Features (Inputkolonner) - `int`, `float`
+- 📤 Output Feature (Målkolonne) - `int`, `float`
 
+## LSTM Model Egenskaber
+- 🔙 Forsinkelsestrin (Lag Steps)
+- 🔜 Forudsigelsestrin (Forecast Steps)
+- Brugerdefinerede LSTM- og Tætte Lag (Dense Layers)
+- ⏱️ Antal Epochs
+- 📦 Batch Størrelse
